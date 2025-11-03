@@ -1,0 +1,145 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: white;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: black;
+    border: 2px;
+    border-bottom: 1px solid rgb(238, 238, 238);
+    padding-bottom: 10px;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(155, 155, 155, 0.8);
+    padding: 15px 30px;
+    font-weight: 600;
+}
+
+.mathIcon {
+    display: block;
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-top: 30px;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+.stat-box span {
+    display: block;
+    font-size: 1.2rem;
+    color: rgb(0, 119, 182);
+    margin-top: 5px;
+}
+
+#seesawContainer {
+    position: relative;
+    width: 500px;
+    height: 250px;
+    margin: 40px auto;
+}
+
+#plank {
+    position: absolute;
+    background-color: black;
+    width: 400px;
+    height: 12px;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: center;
+    border-radius: 5px;
+    transition: tranform 1s ease-out;
+}
+
+#pivot {
+    position: absolute;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid rgb(85, 85, 85);
+    top: 125px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#resetButton {
+    background-color: rgb(0, 119, 182);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+#resetButton:hover {
+    background-color: rgb(0, 73, 112);
+}
+
+#pauseButton {
+    background-color: rgb(0, 119, 182);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+
+}
+
+#pauseButton:hover {
+    background-color: rgb(0, 73, 112);
+
+}
+
+#logContainer {
+    background-color: white;
+    width: 500px;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(155, 155, 155, 0.8);
+    padding: 10px 20px;
+    text-align: left;
+}
+
+#logContainer h2 {
+    border-bottom: 1px solid rgb(238, 238, 238);
+    padding-bottom: 5px;
+}
+
+#logList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#logList li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgb(238, 238, 238);
+    font-size: 14px;
+
+}

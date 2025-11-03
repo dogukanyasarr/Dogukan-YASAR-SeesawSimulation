@@ -1,11 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seesaw Simulation</title>
+    <Link rel="stylesheet" href="/style.css" />
 </head>
+
 <body>
+
+    <!-- Başlık -->
     <h1>Seesaw Simulation Project</h1>
+
+
+    <!-- Ağırlık verilerinin bulunduğu kısım. -->
+    <div class="stats">
+        <div class="stat-box">
+            <p>Sıradaki Ağırlık</p>
+            <span id="nextWeight">0 Kg</span>
+        </div>
+        <div class="stat-box">
+            <p>Sol Ağırlık</p>
+            <span id="leftWeight">0.0 Kg</span>
+        </div>
+        <p class="mathIcon">+</p>
+        <div class="stat-box">
+            <p>Sağ Ağırlık</p>
+            <span id="rightWeight">0.0 Kg</span>
+        </div>
+        <p class="mathIcon">=</p>
+        <div class="stat-box">
+            <p>Toplam Ağırlık</p>
+            <span id="totalWeight">0 Kg</span>
+        </div>
+        <div class="stat-box">
+            <p>Eğim Açısı</p>
+            <span id="angleDisplay">0°</span>
+        </div>
+
+    </div>
+    <!-- Tahterevalli Simülasyonunu oluşturduğum kısım -->
+    <div id="seesawContainer">
+        <div id="pivot"></div>
+        <div id="plank"></div>
+    </div>
+
+    <!-- Simülasyonu durdurma ve temizleme işlemlerini yapacak butonlar -->
+    <div id="buttonContainer">
+        <button id="resetButton">Ağırlıkları Temizle</button>
+        <button id="pauseButton">Durdur</button>
+    </div>
+
+    <!-- Simülasyona gönderilen ağırlıkların kaydını tutan tablo yapısı -->
+    <div id="logContainer">
+        <h2>Ağırlık Kaydı</h2>
+        <ul id="logList">
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+        </ul>
+    </div>
 </body>
+
 </html>
