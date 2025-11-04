@@ -301,3 +301,97 @@ h1::after {
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
     user-select: none;
 }
+
+@media (max-width: 992px) {
+    h1 {
+        width: 70%;
+        font-size: 1.8rem;
+    }
+
+    #seesawContainer {
+        width: 400px;
+        height: 220px;
+    }
+
+    #plank {
+        width: 320px;
+    }
+
+    .stats {
+        gap: 25px;
+    }
+
+    #logContainer {
+        width: 85%;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        width: 90%;
+        font-size: 1.6rem;
+    }
+
+    .stat-box, .stat-box-corner {
+        width: 80%;
+        padding: 12px 20px;
+    }
+
+    #seesawContainer {
+        width: 320px;
+        height: 200px;
+    }
+
+    #plank {
+        width: 260px;
+    }
+
+    #buttonContainer {
+        flex-direction: column;
+    }
+
+    #logContainer {
+        width: 90%;
+    }
+
+    #logList li {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        width: 100%;
+        font-size: 1.4rem;
+    }
+
+    #seesawContainer {
+        width: 260px;
+        height: 180px;
+    }
+
+    #plank {
+        width: 200px;
+    }
+
+    .button {
+        width: 80%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .stat-box, .stat-box-corner {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #logContainer {
+        width: 95%;
+        padding: 8px;
+    }
+
+    #logList {
+        max-height: 150px;
+        padding: 10px;
+    }
+}
