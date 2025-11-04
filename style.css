@@ -64,7 +64,6 @@ h1::after {
     box-shadow: 0 0px 15px rgba(150, 130, 255, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
-    border-radius: 12px;
     padding: 15px 40px;
     animation: float 4s ease-in-out infinite;
     transform: all 0.3s ease;
@@ -84,21 +83,36 @@ h1::after {
         transform: translateY(-5px);
     }
 }
+.stat-box-corner{
+    position: relative;
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2),  rgba(32, 255, 129, 0.6), rgba(255, 255, 255, 0.2));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0px 15px rgba(150, 130, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 15px 40px;
+    animation: float 4s ease-in-out infinite;
+    transform: all 0.3s ease;
+
+}
+
 .mathIcon {
   display: block;
   font-weight: 900;
   font-size: 4rem;
   margin-top: 30px;
   text-align: center;
-  background: linear-gradient(270deg, #0a55a12c, #ffffff, #0a55a12c);
+  background: linear-gradient(270deg, rgb(32, 255, 129), #ffffff, rgb(32, 255, 129));
   background-size: 200% 100%;
   animation: shineFlow 4s ease-in-out infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 
-  0 0 6px rgba(0, 123, 255, 0.5),
-  0 0 5px rgba(0, 123, 255, 0.05),
-  0 0 10px rgba(0, 123, 255, 0);
+  0 0 6px rgba(32, 255, 129 0.5),
+  0 0 5px rgba(32, 255, 129 0.05),
+  0 0 10px rgba(32, 255, 129 0);
 }
 @keyframes shineFlow{
     0% {
