@@ -6,7 +6,7 @@ body {
 }
 
 h1 {
-    background: linear-gradient(270deg, #003268,#0050a5, #ffffff, #0050a5, #003268);
+    background: linear-gradient(270deg, #003268, #0050a5, #ffffff, #0050a5, #003268);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -31,21 +31,32 @@ h1::after {
     border-radius: 2px;
 }
 
-@keyframes gradientFlow{
-    0%{
+@keyframes gradientFlow {
+    0% {
         background-position: 0% 50%;
     }
-    50%{
+
+    50% {
         background-position: 100% 50%;
     }
-    100%{
+
+    100% {
         background-position: 0% 50%;
     }
 }
+
 @keyframes textFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .stats {
@@ -58,7 +69,7 @@ h1::after {
 .stat-box {
     position: relative;
     font-weight: 600;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2),  rgba(145, 123, 255, 0.6), rgba(255, 255, 255, 0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(145, 123, 255, 0.6), rgba(255, 255, 255, 0.2));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0px 15px rgba(150, 130, 255, 0.4);
@@ -68,7 +79,8 @@ h1::after {
     animation: float 4s ease-in-out infinite;
     transform: all 0.3s ease;
 }
-.stat-box:hover{
+
+.stat-box:hover {
     box-shadow: 0 0 25px rgba(173, 216, 255, 0.7);
 }
 
@@ -83,10 +95,11 @@ h1::after {
         transform: translateY(-5px);
     }
 }
-.stat-box-corner{
+
+.stat-box-corner {
     position: relative;
     font-weight: 600;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2),  rgba(32, 255, 129, 0.6), rgba(255, 255, 255, 0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(32, 255, 129, 0.6), rgba(255, 255, 255, 0.2));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0px 15px rgba(150, 130, 255, 0.4);
@@ -99,29 +112,32 @@ h1::after {
 }
 
 .mathIcon {
-  display: block;
-  font-weight: 900;
-  font-size: 4rem;
-  margin-top: 30px;
-  text-align: center;
-  background: linear-gradient(270deg, rgb(32, 255, 129), #ffffff, rgb(32, 255, 129));
-  background-size: 200% 100%;
-  animation: shineFlow 4s ease-in-out infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 
-  0 0 6px rgba(32, 255, 129 0.5),
-  0 0 5px rgba(32, 255, 129 0.05),
-  0 0 10px rgba(32, 255, 129 0);
+    display: block;
+    font-weight: 900;
+    font-size: 4rem;
+    margin-top: 30px;
+    text-align: center;
+    background: linear-gradient(270deg, rgb(32, 255, 129), #ffffff, rgb(32, 255, 129));
+    background-size: 200% 100%;
+    animation: shineFlow 4s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:
+        0 0 6px rgba(32, 255, 129 0.5),
+        0 0 5px rgba(32, 255, 129 0.05),
+        0 0 10px rgba(32, 255, 129 0);
 }
-@keyframes shineFlow{
+
+@keyframes shineFlow {
     0% {
         background-position: 0% 50%;
     }
-    50%{
+
+    50% {
         background-position: 100% 50%;
     }
-    100%{
+
+    100% {
         background-position: 0% 50%;
     }
 }
@@ -174,7 +190,7 @@ h1::after {
 }
 
 .button {
-    background: linear-gradient(135deg, rgba(173, 216, 255, 0.25), rgba(0, 123,255,0.3));
+    background: linear-gradient(135deg, rgba(173, 216, 255, 0.25), rgba(0, 123, 255, 0.3));
     color: white;
     border: none;
     padding: 10px 25px;
@@ -196,7 +212,7 @@ h1::after {
 }
 
 #logContainer {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2),  rgba(145, 123, 255, 0.6), rgba(255, 255, 255, 0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(145, 123, 255, 0.6), rgba(255, 255, 255, 0.2));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0px 15px rgba(150, 130, 255, 0.4);
@@ -210,12 +226,12 @@ h1::after {
 }
 
 #logContainer h2 {
-    background: linear-gradient(270deg, #003268,#0050a5, #ffffff, #0050a5, #003268);
+    background: linear-gradient(270deg, #003268, #0050a5, #ffffff, #0050a5, #003268);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     /* bu kısım h1 etiketi ile aynı "textFlow"u kullanıyor */
-    animation: textFlow 13s ease-in-out infinite; 
+    animation: textFlow 13s ease-in-out infinite;
     border-bottom: 1px solid rgb(238, 238, 238);
     padding-bottom: 20px;
     text-align: center;
@@ -229,16 +245,40 @@ h1::after {
 }
 
 #logList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 6px 0;
     border-bottom: 1px solid rgb(221, 220, 220);
     font-size: 14px;
-
 }
-.weight-object{
-    box-shadow:  0 6px 18px rgba(0,0,0,0.18);
-    border: 2px solid rgba(255,255,255,0.6);
+
+.delete-btn {
+  padding: 3px 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
+  background: linear-gradient(135deg, rgba(255, 85, 85, 0.7), rgba(255, 0, 0, 0.5));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 6px rgba(255, 85, 85, 0.4);
+  transition: all 0.25s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 51, 51, 0.8), rgba(200, 0, 0, 0.6));
+  box-shadow: 0 0 10px rgba(255, 51, 51, 0.6);
+  transform: scale(1.05);
+}
+
+
+.weight-object {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    border: 2px solid rgba(255, 255, 255, 0.6);
     color: white;
     font-weight: 700;
-    text-shadow: 0 0 3px rgba(0,0,0,0.6);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
     user-select: none;
 }

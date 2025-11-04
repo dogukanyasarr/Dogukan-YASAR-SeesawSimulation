@@ -2,15 +2,30 @@ const plank = document.getElementById("plank");
 const pivot = document.getElementById("pivot");
 const container = document.getElementById("seesawContainer");
 
-let objects = [];
+const nextWeightEl = document.getElementById("nextWeight");
+const leftWeightEl = document.getElementById("leftWeight");
+const rightWeightEl = document.getElementById("rightWeight");
+const totalWeightEl = document.getElementById("totalWeight");
+const angleDisplayEl = document.getElementById("angleDisplay");
+const resetButton = document.getElementById("resetButton");
+const pauseButton = document.getElementById("pauseButton");
+const logList = document.getElementById("logList");
+
+let objects = JSON.parse(localStorage.getItem("seesawObjects")) || [];
+let nextWeight = Math.floor(Math.random() * 10) + 1;
+let isPaused = false;
+
 let nextObjectId = 0;
 let currentAngle = 0;
 let angularVelocity = 0;
+
 const G = 9.81;
 const MAX_ANGLE_DEG = 30;
 const DAMPING = 0.005;
 const MAX_ANGLE_RAD = MAX_ANGLE_DEG * (Math.PI / 180);
 const BOARD_MASS_I_FACTOR = 10000;
+const DROP_DURATION = 0.7;
+
 let lastTime = 0;
 
 function randColor() {
@@ -51,8 +66,17 @@ function computeTargetCenter(distanceFromPivot, radius, angleRad, dropFactor = 0
 
   return { cx, cy };
 }
+function renderObjects() {
+  document.querySelectorAll(".weight-object").forEach((n) => n.remove());
 
-// ağırlık toplarını fonksiyon olarak oluşturuyorum.
+  objects.forEach((obj) => {
+    const el = createObjectDOM(obj);
+    container.appendChild(el);
+  });
+
+  updateObjectPositions(true);
+}
+// ağırlık toplarını fonksiyon olarak oluşturuyprum.
 function createObjectDOM(obj) {
   const el = document.createElement("div");
   el.className = "weight-object";
@@ -72,20 +96,37 @@ function createObjectDOM(obj) {
   el.style.fontWeight = "bold";
   el.style.textShadow = "0 0 3px rgba(0,0,0,0.6)";
 
-  container.appendChild(el);
+
+  el.dataset.objId = obj.id;
   return el;
 }
 
-function updateObjectPositions() {
+function updateObjectPositions(instant = false) {
   const angleDeg = currentAngle * (180 / Math.PI);
   plank.style.transform = `translateX(-50%) rotate(${angleDeg}deg)`;
 
-  objects.forEach((obj) => {
-    const dist = obj.x;
-    const r = 10 + obj.weight;
-    const { cx, cy } = computeTargetCenter(dist, r, currentAngle, obj.dropProgress);
-    obj.el.style.left = `${cx}px`;
-    obj.el.style.top = `${cy}px`;
+  document.querySelectorAll(".weight-object").forEach((el) => {
+    const objId = parseInt(el.dataset.objId);
+    const obj = objects.find(o => o.id === objId);
+    if (!obj) return;
+
+    const dist = parseFloat(el.dataset.x);
+    const size = parseFloat(el.style.width) || 28;
+    const r = size / 2;
+
+    const isDropping = obj.isDropping || false;
+    const dropFactor = obj.dropProgress || 0;
+
+    const { cx, cy } = computeTargetCenter(dist, r, currentAngle, dropFactor);
+
+    if (instant || !isDropping) {
+      el.style.transition = "left 0.05s linear, top 0.05s linear";
+    } else {
+      el.style.transition = "none";
+    }
+
+    el.style.left = `${cx}px`;
+    el.style.top = `${cy}px`;
   });
 }
 
@@ -93,13 +134,25 @@ function updateObjectPositions() {
 function calculateTorque(objects) {
   let leftTorque = 0;
   let rightTorque = 0;
+  let totalLeftWeight = 0;
+  let totalRightWeight = 0;
 
   objects.forEach((obj) => {
     const d = obj.x;
     const force = obj.weight * G;
-    if (d < 0) leftTorque += Math.abs(d) * force;
-    else rightTorque += d * force;
+    if (d < 0) {
+      leftTorque += Math.abs(d) * force;
+      totalLeftWeight += obj.weight;
+    }
+    else {
+      rightTorque += d * force;
+      totalRightWeight += obj.weight;
+    }
   });
+
+  leftWeightEl.textContent = totalLeftWeight.toFixed(1);
+  rightWeightEl.textContent = totalRightWeight.toFixed(1);
+  totalWeightEl.textContent = (totalLeftWeight + totalRightWeight).toFixed(1);
 
   return rightTorque - leftTorque;
 }
@@ -113,53 +166,141 @@ function calculateMomentOfInertia(objects) {
 }
 
 function gameLoop(time) {
-  const deltaTime = (time - lastTime) / 1000;
+  if (!isPaused) {
+    const deltaTime = (time - lastTime) / 1000;
 
-  const netTork = calculateTorque(objects);
-  const I = calculateMomentOfInertia(objects);
-  const angularAcceleration = netTork / I;
+    const netTork = calculateTorque(objects);
+    const I = calculateMomentOfInertia(objects);
+    const angularAcceleration = netTork / I;
 
-  angularVelocity += angularAcceleration * deltaTime;
-  angularVelocity *= (1 - DAMPING);
+    angularVelocity += angularAcceleration * deltaTime;
+    angularVelocity *= (1 - DAMPING);
 
-  currentAngle += angularVelocity * deltaTime;
-  currentAngle = Math.max(-MAX_ANGLE_RAD, Math.min(MAX_ANGLE_RAD, currentAngle));
+    currentAngle += angularVelocity * deltaTime;
+    currentAngle = Math.max(-MAX_ANGLE_RAD, Math.min(MAX_ANGLE_RAD, currentAngle));
 
-  updateObjectPositions();
+    updateDropAnimations(deltaTime);
+    updateObjectPositions(false);
+
+    angleDisplayEl.textContent = `${(currentAngle * (180 / Math.PI)).toFixed(1)}°`;
+
+  }
+
   lastTime = time;
   requestAnimationFrame(gameLoop);
 }
+function updateDropAnimations(deltaTime) {
+  objects.forEach(obj => {
+    if (obj.isDropping) {
+      obj.dropTimer = (obj.dropTimer || 0) + deltaTime;
 
+      let progress = 1 - Math.min(1, obj.dropTimer / DROP_DURATION);
+
+      obj.dropProgress = Math.pow(progress, 2);
+
+      if (obj.dropProgress === 0) {
+        obj.isDropping = false;
+        delete obj.dropTimer;
+        delete obj.dropProgress;
+        localStorage.setItem("seesawObjects", JSON.stringify(objects));
+      }
+    }
+  });
+}
 function addWeightHandler(e) {
+  if (isPaused) return;
   const plankRect = plank.getBoundingClientRect();
   const clickX = e.clientX - (plankRect.left + plankRect.width / 2);
 
-  const weight = Math.floor(Math.random() * 10) + 1;
   const color = randColor();
+  const currentAddedWeight = nextWeight;
 
   const newObj = {
     id: nextObjectId++,
     x: clickX,
-    weight,
+    weight: currentAddedWeight,
     color,
+    isDropping: true,
     dropProgress: 1.0,
   };
 
-  const el = createObjectDOM(newObj);
-  newObj.el = el;
   objects.push(newObj);
+  localStorage.setItem("seesawObjects", JSON.stringify(objects));
 
-  const dropTime = 700;
-  const dropStart = performance.now();
+  nextWeight = Math.floor(Math.random() * 10) + 1;
+  nextWeightEl.textContent = `${nextWeight} kg`;
+  addLog(newObj);
 
-  function animateDrop(now) {
-    const progress = Math.min(1, (now - dropStart) / dropTime);
-    newObj.dropProgress = Math.pow(1 - progress, 2);
-    if (progress < 1) requestAnimationFrame(animateDrop);
-  }
+  const el = createObjectDOM(newObj);
+  container.appendChild(el);
 
-  requestAnimationFrame(animateDrop);
+  updateObjectPositions(true); 
+}
+function deleteWeight(id, listItemEl) {
+  objects = objects.filter(o => o.id !== id);
+
+  localStorage.setItem("seesawObjects", JSON.stringify(objects));
+  const el = document.querySelector(`.weight-object[data-obj-id="${id}"]`);
+  if (el) el.remove();
+
+  if (listItemEl) listItemEl.remove();
+
+  calculateTorque(objects);
+}
+
+function addLog(obj) {
+  const li = document.createElement("li");
+  li.className = "log-item"; 
+
+  const side = obj.x >= 0 ? "SAĞ" : "SOL";
+  const pos = Math.abs(obj.x.toFixed(0));
+
+  const textSpan = document.createElement("span");
+  textSpan.className = "log-text";
+  textSpan.textContent = `Ağırlık: ${obj.weight} kg | Konum: ${side} tarafa konumlandırıldı. (${pos}) px`;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-btn";
+  deleteBtn.textContent = "Sil";
+
+  deleteBtn.addEventListener("click", () => {
+    deleteWeight(obj.id, li);
+  });
+
+  li.appendChild(textSpan);
+  li.appendChild(deleteBtn);
+  logList.appendChild(li);
+}
+
+
+function resetAll() {
+  objects = [];
+  localStorage.removeItem("seesawObjects");
+  document.querySelectorAll(".weight-object").forEach((n) => n.remove());
+  
+  currentAngle = 0;
+  angularVelocity = 0; 
+  
+  plank.style.transform = `translateX(-50%) rotate(0deg)`;
+  angleDisplayEl.textContent = `0°`;
+  leftWeightEl.textContent = "0";
+  rightWeightEl.textContent = "0";
+  totalWeightEl.textContent = "0";
+  logList.innerHTML = "";
+}
+
+function togglePause() {
+  isPaused = !isPaused;
+  pauseButton.textContent = isPaused ? "Devam Et" : "Durdur";
 }
 
 plank.addEventListener("click", addWeightHandler);
+resetButton.addEventListener("click", resetAll);
+pauseButton.addEventListener("click", togglePause);
+
+nextWeightEl.textContent = `${nextWeight} kg`;
+
+nextObjectId = objects.length > 0 ? Math.max(...objects.map(o => o.id || 0)) + 1 : 0;
+renderObjects();
+
 requestAnimationFrame(gameLoop);
