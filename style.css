@@ -142,13 +142,18 @@ h1::after {
     }
 }
 
-.stat-box span {
+.stat-box {
     display: block;
     font-size: 1.2rem;
     color: white;
     margin-top: 5px;
 }
-
+.stat-box-corner {
+    display: block;
+    font-size: 1.2rem;
+    color: white;
+    margin-top: 5px;
+}
 #seesawContainer {
     position: relative;
     width: 500px;
@@ -294,8 +299,13 @@ h1::after {
 
 
 .weight-object {
+    position: absolute;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    text-shadow: 0 0 3px rgba(0,0,0,0.6);
     border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
     color: white;
     font-weight: 700;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);

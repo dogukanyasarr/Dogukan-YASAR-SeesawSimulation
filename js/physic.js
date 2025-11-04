@@ -1,9 +1,10 @@
-export function calculateTorque(objects, G, leftWeightEl, rightWeightEl, totalWeightEl) {
+// tork hesaplamasının yapıldı fonksiyon.
+export function calculateTorque(objects) {
   let leftTorque = 0, rightTorque = 0, totalLeftWeight = 0, totalRightWeight = 0;
 
   objects.forEach((obj) => {
-    const d = obj.x;
-    const force = obj.weight * G;
+    const d = obj.x; // pivot'a olan uzaklık
+    const force = obj.weight; 
     if (d < 0) {
       leftTorque += Math.abs(d) * force;
       totalLeftWeight += obj.weight;
@@ -13,13 +14,11 @@ export function calculateTorque(objects, G, leftWeightEl, rightWeightEl, totalWe
     }
   });
 
-  leftWeightEl.textContent = totalLeftWeight.toFixed(1);
-  rightWeightEl.textContent = totalRightWeight.toFixed(1);
-  totalWeightEl.textContent = (totalLeftWeight + totalRightWeight).toFixed(1);
-
-  return rightTorque - leftTorque;
+    // en son işlemdeki tork ve ağırlık bilgilerini döndürme.
+  return { leftTorque, rightTorque, totalLeftWeight, totalRightWeight };
 }
 
+// tahtanın ağırlığa göre dönme durumunu hesaplar
 export function calculateMomentOfInertia(objects, BOARD_MASS_I_FACTOR) {
   let I = 0;
   objects.forEach((obj) => {

@@ -1,6 +1,8 @@
 import { randColor, createObjectDOM, renderObjects, updateObjectPositions, addLog } from "./function.js";
-import { calculateTorque, calculateMomentOfInertia, updateDropAnimations } from "./physic.js";
+import { calculateTorque } from "./physic.js";
 
+
+// HTML elementlerini burdan çağırıyorum
 const plank = document.getElementById("plank");
 const pivot = document.getElementById("pivot");
 const container = document.getElementById("seesawContainer");
@@ -10,41 +12,53 @@ const rightWeightEl = document.getElementById("rightWeight");
 const totalWeightEl = document.getElementById("totalWeight");
 const angleDisplayEl = document.getElementById("angleDisplay");
 const resetButton = document.getElementById("resetButton");
-const pauseButton = document.getElementById("pauseButton");
+const pauseButton = document.getElementById("pauseButton"); 
 const logList = document.getElementById("logList");
 
+// siteyi kapattıktan sonra tekrar açtığımda simülasyonda nerde kaldıysam ordan devam etmemi sağlıyor(local storage).
 let objects = JSON.parse(localStorage.getItem("seesawObjects")) || [];
+
+// random ağırlıklar oluşmasını sağlıyor.
 let nextWeight = Math.floor(Math.random() * 10) + 1;
-let isPaused = false;
 
+const MAX_ANGLE = 30; // eğimin max 30 olacağını sabit olarak verdim.
+const DROP_DURATION = 0.7; // ağırlıkların havadan düşme animasyon hızı.
 let nextObjectId = 0;
-let currentAngle = 0;
-let angularVelocity = 0;
-
-const G = 9.81;
-const MAX_ANGLE_DEG = 30;
-const DAMPING = 0.005;
-const MAX_ANGLE_RAD = MAX_ANGLE_DEG * (Math.PI / 180);
-const BOARD_MASS_I_FACTOR = 10000;
-const DROP_DURATION = 0.7;
-
 let lastTime = 0;
 
+let isPaused = false; 
+
+// düşen ağırlıkların animasyon güncellemeleri
+function updateDropAnimations(objects, deltaTime, duration) {
+  objects.forEach(obj => {
+    if (obj.isDropping) {
+      obj.dropProgress -= deltaTime / duration;
+      if (obj.dropProgress <= 0) {
+        obj.dropProgress = 0;
+        obj.isDropping = false;
+      }
+    }
+  });
+}
+
+// plank'e tıkladığımda ağırlıların eklenme fonksiyonu
 function addWeightHandler(e) {
-  if (isPaused) return;
+  if (isPaused) return; 
+
   const plankRect = plank.getBoundingClientRect();
   const clickX = e.clientX - (plankRect.left + plankRect.width / 2);
 
   const color = randColor();
   const currentAddedWeight = nextWeight;
 
+  // random renklerle oluşan ağırlıklar
   const newObj = {
     id: nextObjectId++,
     x: clickX,
     weight: currentAddedWeight,
     color,
     isDropping: true,
-    dropProgress: 1.0,
+    dropProgress: 1.0
   };
 
   objects.push(newObj);
@@ -56,24 +70,52 @@ function addWeightHandler(e) {
 
   const el = createObjectDOM(newObj);
   container.appendChild(el);
-  updateObjectPositions(container, pivot, plank, currentAngle, objects, true);
 }
 
+// ağırlıkları, ağırlık kaydı bölümünden silme.
 function deleteWeight(id, listItemEl) {
+  if (isPaused) return; 
+
   objects = objects.filter(o => o.id !== id);
   localStorage.setItem("seesawObjects", JSON.stringify(objects));
+
   const el = document.querySelector(`.weight-object[data-obj-id="${id}"]`);
   if (el) el.remove();
   if (listItemEl) listItemEl.remove();
-  calculateTorque(objects, G, leftWeightEl, rightWeightEl, totalWeightEl);
 }
 
+// matematiksel tahta'nın eğimini ölçme
+function updateSeesaw() {
+  const { leftTorque, rightTorque, totalLeftWeight, totalRightWeight } = calculateTorque(objects);
+
+  leftWeightEl.textContent = totalLeftWeight.toFixed(1);
+  rightWeightEl.textContent = totalRightWeight.toFixed(1);
+  totalWeightEl.textContent = (totalLeftWeight + totalRightWeight).toFixed(1);
+
+  const torqueDiff = rightTorque - leftTorque;
+  const angleDeg = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, torqueDiff / 10));
+  const angleInRad = angleDeg * (Math.PI / 180);
+
+  plank.style.transform = `translateX(-50%) rotate(${angleDeg}deg)`;
+  angleDisplayEl.textContent = `${angleDeg.toFixed(1)}°`;
+
+  updateObjectPositions(container, pivot, plank, angleInRad, objects, false);
+}
+
+function gameLoop(time) {
+  if (!isPaused) { 
+    const deltaTime = (time - lastTime) / 1000;
+    updateDropAnimations(objects, deltaTime, DROP_DURATION);
+    updateSeesaw();
+  }
+  lastTime = time;
+  requestAnimationFrame(gameLoop);
+}
+// resetleme işlemi
 function resetAll() {
   objects = [];
   localStorage.removeItem("seesawObjects");
   document.querySelectorAll(".weight-object").forEach((n) => n.remove());
-  currentAngle = 0;
-  angularVelocity = 0;
   plank.style.transform = `translateX(-50%) rotate(0deg)`;
   angleDisplayEl.textContent = `0°`;
   leftWeightEl.textContent = "0";
@@ -82,40 +124,17 @@ function resetAll() {
   logList.innerHTML = "";
 }
 
+// ağırlık ekleme işlemini durdurma/başlatma
 function togglePause() {
   isPaused = !isPaused;
   pauseButton.textContent = isPaused ? "Devam Et" : "Durdur";
 }
 
-function gameLoop(time) {
-  if (!isPaused) {
-    const deltaTime = (time - lastTime) / 1000;
-
-    const netTork = calculateTorque(objects, G, leftWeightEl, rightWeightEl, totalWeightEl);
-    const I = calculateMomentOfInertia(objects, BOARD_MASS_I_FACTOR);
-    const angularAcceleration = netTork / I;
-
-    angularVelocity += angularAcceleration * deltaTime;
-    angularVelocity *= (1 - DAMPING);
-
-    currentAngle += angularVelocity * deltaTime;
-    currentAngle = Math.max(-MAX_ANGLE_RAD, Math.min(MAX_ANGLE_RAD, currentAngle));
-
-    updateDropAnimations(objects, deltaTime, DROP_DURATION);
-    updateObjectPositions(container, pivot, plank, currentAngle, objects, false);
-
-    angleDisplayEl.textContent = `${(currentAngle * (180 / Math.PI)).toFixed(1)}°`;
-  }
-
-  lastTime = time;
-  requestAnimationFrame(gameLoop);
-}
-
 plank.addEventListener("click", addWeightHandler);
 resetButton.addEventListener("click", resetAll);
-pauseButton.addEventListener("click", togglePause);
+pauseButton.addEventListener("click", togglePause); 
 
 nextWeightEl.textContent = `${nextWeight} kg`;
 nextObjectId = objects.length > 0 ? Math.max(...objects.map(o => o.id || 0)) + 1 : 0;
-renderObjects(container, objects, plank, currentAngle);
+renderObjects(container, objects, plank, 0);
 requestAnimationFrame(gameLoop);

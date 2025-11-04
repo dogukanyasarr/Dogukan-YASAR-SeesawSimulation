@@ -1,3 +1,4 @@
+// random renk üretir
 export function randColor() {
   return `hsl(${Math.floor(Math.random() * 360)}, 80%, 55%)`;
 }
@@ -10,6 +11,8 @@ export function getPivotLocal(container, pivot) {
   return { px, py };
 }
 
+// dönme açısına göre eksen ve normal vektörlerini döndürür
+
 export function axisAndNormal(angleRad) {
   const ux = Math.cos(angleRad);
   const uy = Math.sin(angleRad);
@@ -18,6 +21,7 @@ export function axisAndNormal(angleRad) {
   return { ux, uy, nx, ny, a: angleRad };
 }
 
+// ağırlığın tahtadaki hedef merkez pozisyonunu hesaplar
 export function computeTargetCenter(container, pivot, plank, distanceFromPivot, radius, angleRad, dropFactor = 0) {
   const { px, py } = getPivotLocal(container, pivot);
   const { ux, uy, nx, ny } = axisAndNormal(angleRad);
@@ -36,6 +40,7 @@ export function computeTargetCenter(container, pivot, plank, distanceFromPivot, 
   return { cx, cy };
 }
 
+// ağırlık toplarının oluştuğu kısım
 export function createObjectDOM(obj) {
   const el = document.createElement("div");
   el.className = "weight-object";
@@ -43,17 +48,11 @@ export function createObjectDOM(obj) {
   el.dataset.x = obj.x;
   el.style.background = obj.color;
 
-  const size = 20 + obj.weight * 2;
+  // ağırlığa göre topların boyutları belirleniyor
+  const size = 30 + obj.weight * 2;
   el.style.width = `${size}px`;
   el.style.height = `${size}px`;
   el.style.lineHeight = `${size}px`;
-  el.style.borderRadius = "50%";
-  el.style.position = "absolute";
-  el.style.transform = "translate(-50%,-50%)";
-  el.style.pointerEvents = "none";
-  el.style.color = "#fff";
-  el.style.fontWeight = "bold";
-  el.style.textShadow = "0 0 3px rgba(0,0,0,0.6)";
   el.dataset.objId = obj.id;
   return el;
 }
@@ -95,6 +94,7 @@ export function updateObjectPositions(container, pivot, plank, currentAngle, obj
   });
 }
 
+// eklenen ağırlıkların kaydı tutuluyor ve liste oluşturulup yazıyor.
 export function addLog(obj, logList, deleteWeight) {
   const li = document.createElement("li");
   li.className = "log-item";
